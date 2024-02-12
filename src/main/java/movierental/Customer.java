@@ -12,8 +12,8 @@ public class Customer {
         this.name = name;
     }
 
-    public void addRental(Rental arg) {
-        rentals.add(arg);
+    public void addRental(Rental rental) {
+        rentals.add(rental);
     }
 
     public String getName() {
@@ -23,20 +23,20 @@ public class Customer {
     public String statement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
-        String result = addHeaderLines();
+        StringBuilder result = new StringBuilder(addHeaderLines());
 
         for (Rental rental : rentals) {
-            double thisAmount = DetermineAmountsForEachLine(rental);
+            double thisAmount = determineAmountsForEachLine(rental);
             frequentRenterPoints += addFrequentRenterPoints(rental);
             // show figures for this rental
-            result += showFiguresForThisRental(rental, thisAmount);
+            result.append(showFiguresForThisRental(rental, thisAmount));
             totalAmount += thisAmount;
         }
 
         // add footer lines
-        result += addFooterLines(totalAmount, frequentRenterPoints);
+        result.append(addFooterLines(totalAmount, frequentRenterPoints));
 
-        return result;
+        return result.toString();
     }
 
     private String addHeaderLines() {
@@ -57,16 +57,13 @@ public class Customer {
     }
 
     private static int addBonusForATwoDaysNewReleaseRental(Rental rental) {
-        if ((rental.getMovie().getPriceCode() == Movie.NEW_RELEASE) && rental.getDaysRented() > 1)
-            return 1;
-        return 0;
+        return (rental.getMovie().getPriceCode() == Movie.NEW_RELEASE && rental.getDaysRented() > 1) ? 1 : 0;
     }
 
-
-    private static double DetermineAmountsForEachLine(Rental rental) {
+    private static double determineAmountsForEachLine(Rental rental) {
         double thisAmount = 0;
 
-        //determine amounts for each line
+        // determine amounts for each line
         switch (rental.getMovie().getPriceCode()) {
             case Movie.REGULAR:
                 thisAmount += 2;
@@ -82,5 +79,6 @@ public class Customer {
                     thisAmount += (rental.getDaysRented() - 3) * 1.5;
                 break;
         }
-        return thisAmount;}}
-  
+        return thisAmount;
+    }
+}
